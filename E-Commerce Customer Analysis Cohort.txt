@@ -1,0 +1,173 @@
+E-Commerce Customer Analysis: Cohort Retention and Market Basket with Tableau
+
+C
+There are so many companies struggle to retain their customers. Poor product/service quality, negative customer experience, and lack of engagement are some factors that cause our customers to switch to our competitors. So, as a Business/Data Analyst, we need to understand these factors and proactively address them through data analysis and targeted strategies that can help businesses reduce churn and improve customer retention.
+
+Customer retention is all about keeping your existing customers happy and engaged so that they continue to do business with you over time.
+
+It’s much more cost-effective to retain a customer than to acquire a new one. Here’s why it’s important:
+
+a. Cost-effectiveness: Acquiring new customers can be expensive due to marketing and sales efforts. Retaining existing customers generally costs less because you’ve already invested in establishing a relationship with them.
+
+b. Revenue Stability: Existing customers are more likely to make repeat purchases. This stability in revenue can help your business weather fluctuations in the market or seasonal trends.
+
+c. Word-of-mouth Marketing: Satisfied customers are more likely to recommend your products or services to others. Positive word-of-mouth can bring in new customers at a lower cost than traditional advertising.
+
+d. Brand Loyalty: Building a base of loyal customers creates a foundation for long-term success. Loyal customers are less likely to switch to competitors and more likely to forgive occasional mistakes or hiccups.
+
+e. Feedback Loop: Existing customers can provide valuable feedback that helps you improve your products or services. This feedback loop can lead to product enhancements and better customer experiences, further enhancing retention.
+
+Part 1
+In this article, I’m going to share how quarterly customer retention rate and its implementation using Data Visualization tools like Tableau. After that, we can do cohort analysis based on the data trend.
+
+Here are the steps to build it:
+
+Firstly, Create a New Workbook in Tableau Desktop. You can choose Sample — Superstore dataset as our main dataset and focus on Sheet 1.
+We have to 
+
+The retention rate measures how well a company retains its customers over a specific period. It's an important metric for understanding customer loyalty and satisfaction.
+
+
+Data Transformation
+
+
+a. For Cohort Analysis
+
+Create the following calculated field and name them
+
+1. Customers First Purchase Quarter: to know the first time of customer purchase in a certain quarter.
+{ FIXED [Customer Name]: MIN(DATETRUNC('quarter', [Order Date]))}. Change Data Type to Date
+
+2. Customers per First Quarter: to know the number of new customer in a certain quarter. 
+{ FIXED [Customers First Purchase Quarter]: COUNTD([Customer Name])}
+
+3. Retention Rate: to know the number of customer who continue business with company i.e number of customer divided by the number of customers per first quarter
+COUNTD([Customer Name])/ SUM([Customers Per First Quarter]). Change Default Number Format to 1 Decimal Place.
+
+4. Elapsed quarters:  to know the number of complete quarters that have passed within a certain time frame. 
+DATEDIFF('quarter', [Customers First Purchase Quarter], DATETRUNC('quarter', [Order Date]))
+
+b. For Market Basket and Profitability 
+
+Create a Calculated Field as Profit Ratio: to measure profitability
+SUM([Profit]) / SUM([Sales])
+
+Joins : Orders on Orders inner join  with order id = order id and  sub category < subcategory. This is to aid visualisation
+
+
+Visualisation
+
+1. Cohort Retention: 
+ Row: Customers 'First Purchase Quarter'- set to Quarter (Quarter Year), and change to Discrete format 
+ Column: a. ‘Order Date’  set to Quarter (Quarter Year), and change to Discrete format.  b. ‘Customers per First Quarter’
+ Colour Marks: ‘Retention Rate’ as aggregated. Use heat map
+ Tooltip Marks: 'Customer Name' as Count Distinct. Unhide Mark
+
+
+
+
+11. We need to create the 4th calculation field with the name of “Elapsed quarters”. Elapsed quarters refers to the number of complete quarters that have passed within a certain time frame. Fill the formula space with the following code.
+
+
+12. Switch Order Date field in Columns pane with “Elapsed Quarters” field and you can see the Cohort Retention with Elapsed Quarters.
+
+
+13. Cohort Retention with Elapsed Quarters with Orange-Blue Diverging palette.
+
+
+14. We can see the Column 0 in Elapsed Quarters and the default value is 100%. Hide the Column 0 in Elapsed Quarters and the final Retention Rate with Elapsed Quarters will be shown like the below picture.
+
+
+
+
+
+
+12. Switch Order Date field in Columns pane with “Elapsed Quarters” field and you can see the Cohort Retention with Elapsed Quarters.
+
+
+13. Cohort Retention with Elapsed Quarters with Orange-Blue Diverging palette.
+
+
+14. We can see the Column 0 in Elapsed Quarters and the default value is 100%. Hide the Column 0 in Elapsed Quarters and the final Retention Rate with Elapsed Quarters will be shown like the below picture.
+
+
+Now, let’s move on to the Cohort Analysis:
+
+Cohort analysis involves grouping customers based on shared characteristics or behaviors and then analyzing their actions and experiences over time.
+
+Here’s why it’s important:
+
+Understanding Customer Behavior: Cohort analysis allows you to see how different groups of customers behave over their lifecycle with your business. For example, you might group customers based on when they made their first purchase and then track their repeat purchase behavior over time.
+Identifying Trends: By comparing the behavior of different cohorts, you can identify trends and patterns that can help you make informed business decisions. For instance, you might discover that customers who sign up during a particular promotion have higher retention rates than those who sign up at other times.
+Optimizing Marketing Strategies: Cohort analysis can help you evaluate the effectiveness of your marketing campaigns. By tracking how different cohorts respond to various marketing initiatives, you can refine your strategies to better target and engage specific customer segments.
+Improving Customer Retention: By understanding which factors influence customer retention, such as onboarding experience or product usage patterns, you can take proactive steps to improve retention rates. For example, if you notice that a certain cohort has a high churn rate after the first month, you can focus on improving the onboarding process to increase retention.
+Understanding customer behavior and identifying trends are the best ways for us to get the right strategies and action items to do for our business development. Quoting from Crystal Widjaja’s LinkedIn post, which in her post said there are 4 cohort patterns that we need to know and its implementation in our previous data visualization:
+
+1.Diagonal Stripes: Universal Events
+
+
+Diagonal Stripes Pattern
+This means something is happening to all of our users in all of our product in the exact same time in Q2 2022.
+
+2. Horizontal Stripes: Cohort-specific impacts
+
+
+Horizontal Stripes Pattern
+Batch of users with unusually in high retention, if this cohort group is larger than other cohort group of the time, it’s associated with an acquisition spike.
+
+3. Vertical Stripes: Time-based impacts
+
+
+Vertical Stripes Pattern
+Vertical stripes tell us something is happening to all of users in the same times in their journey relative. That could be something like paywall that happens in the 5th quarters (1 year after the first product purchase).
+
+4. Outlier Blocks: Temporary, cohort-specific events
+
+
+Outlier Blocks Pattern
+This number (77,8%) refers to a cell of unusually high retention. This could highlight successful initiatives such as the growth team implementing a successful experiment in a particular month that affects users from only that month.
+
+You can also create a line chart to see the trend of retention rate for each quarters. Create a new sheet with the name of ‘Trend of Retention Rate’. You only need to drag Retention Rate field to Y axis and Elapsed Quarters field to X axis, then change Elapsed Quarters to Continues value.
+
+
+Here is the final output:
+
+
+Image b
+Based on the above line chart, we can see that the retention rate experienced an increase from the second quarter after the initial/first product purchase and continued to rise until the 15th quarter by 54%. However, we need to find out how the trend looks when viewed based on customer segments.
+
+This is very easy to do, simply by duplicating the sheet above, then renaming it to “Trend of Retention Rate by Segment”. Drag and drop the Segment field onto the Color Marks to differentiate the retention rate based on Customer Segment.”
+
+
+Image c
+Looking at image c, the Retention rate trend for the Consumer segment initially fluctuated in the range of 13%-17%, but afterwards increased very rapidly after entering the 13th quarter until the 16th quarter, reaching 30.5%.
+
+
+Image d
+For more detail, we can find out specifically which category industries are favored by the Consumer segment. You drag and drop the Segment field into the Filters area, then drag and drop the Category field onto the Color Marks. After that, we can see that the high increase in Retention rate in the Consumer segment is dominated by customer demand in the Office Supplies product category.
+
+We can assume that the Office Supplies category is indeed an industry category where we can easily retain customers in the Consumer segment. However, we also need to know which category is actually the most profitable for the company, so on one hand, we are already adept at retaining customers, on the other hand, we can also increase our profitability.
+
+
+Image e
+Image e provides us with a new insight that two categories (Office Supplies and Technology) have already yielded us a profit of 128k USD. What we need to do is to try to increase our profitability in the underperforming category, which is Furniture.
+
+So, here are some examples of marketing strategies tailored for the furniture industry:
+
+Visual Content Marketing: Utilize visually appealing content such as high-quality images, videos, and 360-degree views of furniture pieces. This can be shared on social media platforms, websites, and in digital advertisements to attract potential customers.
+Influencer Partnerships: Collaborate with interior design influencers and home decor bloggers to showcase your furniture products in real-life settings. Influencers can provide authentic reviews and styling tips to their followers, helping to increase brand visibility and credibility.
+Personalized Recommendations: Implement data-driven marketing techniques to offer personalized product recommendations based on customer preferences and browsing history. This can be done through email marketing campaigns, targeted advertisements, and on-site recommendations.
+Partnerships with Home Builders and Interior Designers: Forge partnerships with home builders, interior designers, and real estate agents to showcase your furniture products in model homes, design projects, and home staging initiatives. This can help increase brand exposure and drive sales through referrals and collaborations.
+Localized Marketing Campaigns: Tailor marketing campaigns to specific geographic regions or target demographics based on local trends, preferences, and cultural nuances. This can include localized advertisements, community events, and partnerships with local businesses to establish a strong presence in target markets.
+Customer Loyalty Programs: Implement loyalty programs that reward customers for repeat purchases and referrals. Offer incentives such as discounts, exclusive access to sales and events, and personalized offers to incentivize customer retention and advocacy.
+So, overall we have used Tableau Desktop for analyzing customer retention and cohort patterns. Part 1 of this articles emphasized the importance of retention rates and the implementation, while Part 2 focused on cohort analysis. It explains how cohort analysis helps understand customer behavior and identify trends, illustrated by four cohort patterns: Diagonal Stripes, Horizontal Stripes, Vertical Stripes, and Outlier Blocks. I provides steps for visualizing retention rate trends and suggests tailored marketing strategies for improving retention in underperforming categories.
+
+I think from the dataset, we can explore in more details. Happy to share this.
+
+Keep Growing!!!
+
+
+Basket market analysis
+
+create calculated field profit ratio
+
